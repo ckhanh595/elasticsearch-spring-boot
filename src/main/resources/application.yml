@@ -8,8 +8,8 @@ logging:
 spring:
   main:
     banner-mode: OFF
-  jackson:
-    property-naming-strategy: SNAKE_CASE
+#  jackson:
+#    property-naming-strategy: SNAKE_CASE
 
 server:
   port: 8001

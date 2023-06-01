@@ -4,7 +4,7 @@ import com.course.elastic.entity.Car;
 
 import java.util.List;
 
-public interface CarService {
+public interface RandomService {
     List<String> BRANDS = List.of("Toyota", "Honda", "Ford", "BMW", "Mitsubishi");
 
     List<String> COLORS = List.of("Red", "Black", "White", "Blue", "Silver");

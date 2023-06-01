@@ -20,20 +20,13 @@ ext {
 	set('micrometerRegistryVersion', "1.5.2")
 }
 
-configurations {
-	developmentOnly
-	runtimeClasspath {
-		extendsFrom developmentOnly
-	}
-}
-
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-webflux'
 
 	// Default
 //	implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.9'
 	implementation "org.apache.commons:commons-lang3:${apacheCommonsLang3Version}"
-	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+	implementation 'org.springframework.boot:spring-boot-starter-data-elasticsearch'
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'io.projectreactor:reactor-test'

@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.concurrent.ThreadLocalRandom;
 
 @Service
-public class RandomCarService implements CarService {
+public class RandomCarService implements RandomService {
     @Override
     public Car generateCar() {
         var brand = BRANDS.get(ThreadLocalRandom.current().nextInt(0, BRANDS.size()));

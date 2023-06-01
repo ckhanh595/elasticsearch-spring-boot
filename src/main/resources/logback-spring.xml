@@ -18,4 +18,6 @@
 		<appender-ref ref="FILE" />
 	</root>
 
+	<logger name="org.springframework.data.elasticsearch.client.WIRE" level="trace"/>
+
 </configuration>
