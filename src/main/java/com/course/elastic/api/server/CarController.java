@@ -6,6 +6,8 @@ import com.course.elastic.service.RandomService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -69,8 +71,9 @@ public class CarController {
     }
 
     @GetMapping(value = "/find")
-    public List<Car> search(@RequestParam String brand, @RequestParam String color) {
-        return carElasticService.search(brand, color);
+    public List<Car> search(@RequestParam String brand, @RequestParam String color, @RequestParam int page, @RequestParam int pageSize) {
+        var pageable = PageRequest.of(page, pageSize, Sort.by(Sort.Direction.DESC,"price"));
+        return carElasticService.search(brand, color, pageable);
     }
 
     @GetMapping(value = "/date")
