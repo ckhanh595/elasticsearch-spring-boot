@@ -1,18 +1,24 @@
-package com.course.elastic.api.server;
+package com.course.elastic.controller;
 
+import com.course.elastic.dto.response.ErrorResponse;
 import com.course.elastic.entity.Car;
 import com.course.elastic.service.CarElasticService;
 import com.course.elastic.service.RandomService;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
@@ -71,9 +77,19 @@ public class CarController {
     }
 
     @GetMapping(value = "/find")
-    public List<Car> search(@RequestParam String brand, @RequestParam String color, @RequestParam int page, @RequestParam int pageSize) {
+    public ResponseEntity<Object> search(@RequestParam String brand, @RequestParam String color, @RequestParam int page, @RequestParam int pageSize) {
         var pageable = PageRequest.of(page, pageSize, Sort.by(Sort.Direction.DESC,"price"));
-        return carElasticService.search(brand, color, pageable);
+        var headers = new HttpHeaders();
+        headers.add(HttpHeaders.SERVER, "CK Spring");
+        headers.add("X-Custom-Header", "Custom Response Header");
+
+        if (StringUtils.isNumeric(color)) {
+            var errorResponse = new ErrorResponse("Invalid color : " + color, LocalDateTime.now());
+            return new ResponseEntity<>(errorResponse, headers, HttpStatus.BAD_REQUEST);
+        }
+
+        var cars = carElasticService.search(brand, color, pageable);
+        return ResponseEntity.ok().headers(headers).body(cars);
     }
 
     @GetMapping(value = "/date")
