@@ -54,6 +54,16 @@ public class Car {
         this.type = type;
     }
 
+    public Car(String id, boolean available, String brand, String color, String type, LocalDate firstReleaseDate, int price) {
+        this.id = id;
+        this.available = available;
+        this.brand = brand;
+        this.color = color;
+        this.type = type;
+        this.firstReleaseDate = firstReleaseDate;
+        this.price = price;
+    }
+
     public String getId() {
         return id;
     }
