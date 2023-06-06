@@ -6,27 +6,19 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class Tire {
     private String manufacturer;
 
-    @JsonProperty(value = "diameter")
+//    @JsonProperty(value = "diameter")
     private int size;
-
-    @JsonIgnore
-    private int price;
 
     public Tire() {
     }
 
-    public Tire(String manufacturer, int size, int price) {
+    public Tire(String manufacturer, int size) {
         this.manufacturer = manufacturer;
         this.size = size;
-        this.price = price;
     }
 
     public String getManufacturer() {
         return manufacturer;
-    }
-
-    public int getPrice() {
-        return price;
     }
 
     public int getSize() {
@@ -37,16 +29,12 @@ public class Tire {
         this.manufacturer = manufacturer;
     }
 
-    public void setPrice(int price) {
-        this.price = price;
-    }
-
     public void setSize(int size) {
         this.size = size;
     }
 
     @Override
     public String toString() {
-        return "Tire [manufacturer=" + manufacturer + ", size=" + size + ", price=" + price + "]";
+        return "Tire [manufacturer=" + manufacturer + ", size=" + size + "]";
     }
 }

@@ -1,7 +1,10 @@
 package com.course.elastic.util;
 
 import com.course.elastic.entity.Car;
+import com.course.elastic.entity.CarEntity;
 import com.course.elastic.repository.CarElasticRepository;
+import com.course.elastic.repository.CarRepository;
+import com.course.elastic.repository.TireRepository;
 import com.course.elastic.service.RandomService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +22,13 @@ public class CarElasticDatasource {
     private static final Logger LOG = LoggerFactory.getLogger(CarElasticDatasource.class);
 
     @Autowired
-    private CarElasticRepository carRepository;
+    private CarElasticRepository carElasticRepository;
+
+    @Autowired
+    private CarRepository carRepository;
+
+    @Autowired
+    private TireRepository tireRepository;
 
     @Autowired
     @Qualifier("randomCarService")
@@ -29,17 +38,36 @@ public class CarElasticDatasource {
     @Qualifier("webClientElasticsearch")
     private WebClient webClient;
 
-    @EventListener(ApplicationReadyEvent.class)
-    public void populateData() {
-        var response = webClient.delete().uri("/elastic-spring-boot").retrieve().bodyToMono(String.class).block();
-        LOG.info("End delete with response {}", response);
+//    @EventListener(ApplicationReadyEvent.class)
+//    public void populateData() {
+//        var response = webClient.delete().uri("/elastic-spring-boot").retrieve().bodyToMono(String.class).block();
+//        LOG.info("End delete with response {}", response);
+//
+//        var cars = new ArrayList<Car>();
+//        for (int i = 0; i < 10_000; i++) {
+//            cars.add(randomService.generateCar());
+//        }
+//
+//        carElasticRepository.saveAll(cars);
+//        LOG.info("Saved {} cars", carElasticRepository.count());
+//    }
 
-        var cars = new ArrayList<Car>();
+//    @EventListener(ApplicationReadyEvent.class)
+    public void populateDataMySql() {
+//        var response = webClient.delete().uri("/elastic-spring-boot").retrieve().bodyToMono(String.class).block();
+//        LOG.info("End delete with response {}", response);
+//        tireRepository.deleteAll();
+//        carRepository.deleteAll();
+        LOG.info("Deleted all records");
+
+        var cars = new ArrayList<CarEntity>();
         for (int i = 0; i < 10_000; i++) {
-            cars.add(randomService.generateCar());
+            var car = randomService.generateCarMySql();
+            car.setId((long) i);
+            cars.add(car);
         }
 
         carRepository.saveAll(cars);
-        LOG.info("Saved {} cars", carRepository.count());
+        LOG.info("Saved {} cars", carElasticRepository.count());
     }
 }

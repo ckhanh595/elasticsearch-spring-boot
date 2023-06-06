@@ -8,6 +8,14 @@ logging:
 spring:
   main:
     banner-mode: OFF
+  datasource:
+    url: jdbc:mysql://localhost:3306/mydb
+    username: root
+    password: 1234
+    driver-class-name: "com.mysql.cj.jdbc.Driver"
+  jpa:
+    hibernate:
+      ddl-auto: none
 #  jackson:
 #    property-naming-strategy: SNAKE_CASE
 

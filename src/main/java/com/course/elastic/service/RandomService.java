@@ -1,6 +1,7 @@
 package com.course.elastic.service;
 
 import com.course.elastic.entity.Car;
+import com.course.elastic.entity.CarEntity;
 
 import java.util.List;
 
@@ -17,5 +18,7 @@ public interface RandomService {
 
     List<String> TIRE_MANUFACTURERS = List.of("Goodyear", "Bridgestone", "Dunlop");
 
-    Car generateCar();
+//    Car generateCar();
+
+    CarEntity generateCarMySql();
 }

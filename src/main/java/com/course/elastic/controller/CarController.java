@@ -1,8 +1,9 @@
 package com.course.elastic.controller;
 
+import com.course.elastic.dto.CarDto;
 import com.course.elastic.dto.response.ErrorResponse;
 import com.course.elastic.entity.Car;
-import com.course.elastic.service.CarElasticService;
+import com.course.elastic.service.CarService;
 import com.course.elastic.service.RandomService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -32,12 +33,12 @@ public class CarController {
     private RandomService randomService;
 
     @Autowired
-    private CarElasticService carElasticService;
+    private CarService carService;
 
-    @GetMapping(value = "/random")
-    public Car random() {
-        return randomService.generateCar();
-    }
+//    @GetMapping(value = "/random")
+//    public Car random() {
+//        return randomService.generateCar();
+//    }
 
     @PostMapping(value = "/echo", consumes = MediaType.APPLICATION_JSON_VALUE)
     public String echo(@RequestBody Car car) {
@@ -45,35 +46,35 @@ public class CarController {
         return car.toString();
     }
 
-    @GetMapping(value = "/random-cars", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<Car> randomCars() {
-        var result = new ArrayList<Car>();
-        for (int i = 0; i < ThreadLocalRandom.current().nextInt(1, 10); i++) {
-            result.add(randomService.generateCar());
-        }
-        return result;
-    }
+//    @GetMapping(value = "/random-cars", produces = MediaType.APPLICATION_JSON_VALUE)
+//    public List<Car> randomCars() {
+//        var result = new ArrayList<Car>();
+//        for (int i = 0; i < ThreadLocalRandom.current().nextInt(1, 10); i++) {
+//            result.add(randomService.generateCar());
+//        }
+//        return result;
+//    }
 
     @GetMapping(value = "/count")
     public String count() {
-        return "There are " + carElasticService.countCars() + " cars";
+        return "There are " + carService.countCars() + " cars";
     }
 
     @PostMapping(value = "")
-    public String create(@RequestBody Car car) {
-        var id = carElasticService.create(car).getId();
+    public String create(@RequestBody CarDto car) {
+        var id = carService.create(car).getId();
         return "Saved with ID = " + id;
     }
 
     @GetMapping(value = "/{id}")
     public Car findById(@PathVariable String id) {
-        return carElasticService.findById(id);
+        return carService.findById(id);
     }
 
     @PutMapping(value = "/{id}")
     public Car update(@PathVariable String id, @RequestBody Car car) {
         car.setId(id);
-        return carElasticService.update(car);
+        return carService.update(car);
     }
 
     @GetMapping(value = "/find")
@@ -88,12 +89,19 @@ public class CarController {
             return new ResponseEntity<>(errorResponse, headers, HttpStatus.BAD_REQUEST);
         }
 
-        var cars = carElasticService.search(brand, color, pageable);
+        var cars = carService.search(brand, color, pageable);
         return ResponseEntity.ok().headers(headers).body(cars);
     }
 
     @GetMapping(value = "/date")
     public List<Car> findCarsReleasedAfter(@RequestParam(name = "first_release_date") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate firstReleaseDate) {
-        return carElasticService.findByFirstReleaseDateAfter(firstReleaseDate);
+        return carService.findByFirstReleaseDateAfter(firstReleaseDate);
+    }
+
+    @GetMapping(value = "/search-by-keyword")
+    public ResponseEntity<Object> searchByKeyword(@RequestParam String keyword, @RequestParam int page, @RequestParam int pageSize) {
+        var pageable = PageRequest.of(page, pageSize);
+        var cars = carService.searchByKeyword(keyword, pageable);
+        return ResponseEntity.ok().body(cars);
     }
 }
