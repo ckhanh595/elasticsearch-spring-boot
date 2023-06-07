@@ -3,6 +3,7 @@ package com.course.elastic.controller;
 import com.course.elastic.dto.CarDto;
 import com.course.elastic.dto.response.ErrorResponse;
 import com.course.elastic.entity.Car;
+import com.course.elastic.job.ElasticSynchronizer;
 import com.course.elastic.service.CarService;
 import com.course.elastic.service.RandomService;
 import org.apache.commons.lang3.StringUtils;
@@ -35,6 +36,8 @@ public class CarController {
     @Autowired
     private CarService carService;
 
+    @Autowired
+    private ElasticSynchronizer elasticSynchronizer;
 //    @GetMapping(value = "/random")
 //    public Car random() {
 //        return randomService.generateCar();
@@ -103,5 +106,25 @@ public class CarController {
         var pageable = PageRequest.of(page, pageSize);
         var cars = carService.searchByKeyword(keyword, pageable);
         return ResponseEntity.ok().body(cars);
+    }
+
+    @GetMapping(value = "/search-by-keyword-optimized")
+    public ResponseEntity<Object> searchByKeywordOptimized(@RequestParam String keyword, @RequestParam int page, @RequestParam int pageSize) {
+        var pageable = PageRequest.of(page, pageSize);
+        var cars = carService.searchByKeywordOptimized(keyword, pageable);
+        return ResponseEntity.ok().body(cars);
+    }
+
+    @GetMapping(value = "/search-by-keyword-fuzzy")
+    public ResponseEntity<Object> searchByKeywordFuzzy(@RequestParam String keyword, @RequestParam int page, @RequestParam int pageSize) {
+        var pageable = PageRequest.of(page, pageSize);
+        var cars = carService.searchByKeywordFuzzy(keyword, pageable);
+        return ResponseEntity.ok().body(cars);
+    }
+
+    @GetMapping(value = "/sync")
+    public ResponseEntity<Object> sync() {
+        elasticSynchronizer.sync();
+        return ResponseEntity.ok().body("Sync!");
     }
 }

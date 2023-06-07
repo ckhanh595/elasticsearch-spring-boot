@@ -77,4 +77,12 @@ public class CarService {
     public List<Car> searchByKeyword(String keyword, Pageable pageable) {
         return carElasticRepository.findByKeyword(keyword, pageable).getContent();
     }
+
+    public List<Car> searchByKeywordOptimized(String keyword, Pageable pageable) {
+        return carElasticRepository.findByKeywordOptimized(keyword, pageable).getContent();
+    }
+
+    public List<Car> searchByKeywordFuzzy(String keyword, Pageable pageable) {
+        return carElasticRepository.findByKeywordFuzzy(keyword, pageable).getContent();
+    }
 }

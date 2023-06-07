@@ -25,4 +25,38 @@ public interface CarElasticRepository extends ElasticsearchRepository<Car, Strin
             " \"fields\": [  \"brand\", \"color\"] \n" +
             "}}")
     Page<Car> findByKeyword(String keyword, Pageable pageable);
+
+    @Query("{" +
+            " \"bool\": {\n" +
+            "      \"must\": [\n" +
+            "        {\n" +
+            "          \"match\": {\n" +
+            "            \"brand\": {\n" +
+            "              \"query\": \"?0\"\n" +
+            "            }\n" +
+            "          }\n" +
+            "        }\n" +
+            "      ],\n" +
+            "      \"should\": [\n" +
+            "        {\n" +
+            "          \"match_phrase\": {\n" +
+            "            \"brand\": {\n" +
+            "              \"query\": \"?0\"\n" +
+            "            }\n" +
+            "          }\n" +
+            "        }\n" +
+            "      ]\n" +
+            "    }" +
+            "}")
+    Page<Car> findByKeywordOptimized(String keyword, Pageable pageable);
+
+    @Query("{\n" +
+            "    \"match\": {\n" +
+            "      \"brand\": {\n" +
+            "        \"query\": \"?0\",\n" +
+            "        \"fuzziness\": \"auto\"\n" +
+            "      }\n" +
+            "    }\n" +
+            "  }")
+    Page<Car> findByKeywordFuzzy(String keyword, Pageable pageable);
 }
