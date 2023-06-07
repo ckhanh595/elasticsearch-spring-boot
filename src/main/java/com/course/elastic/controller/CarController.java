@@ -2,6 +2,7 @@ package com.course.elastic.controller;
 
 import com.course.elastic.dto.response.ErrorResponse;
 import com.course.elastic.entity.Car;
+import com.course.elastic.exception.IllegalApiParamException;
 import com.course.elastic.service.CarElasticService;
 import com.course.elastic.service.RandomService;
 import org.apache.commons.lang3.StringUtils;
@@ -83,9 +84,17 @@ public class CarController {
         headers.add(HttpHeaders.SERVER, "CK Spring");
         headers.add("X-Custom-Header", "Custom Response Header");
 
+//        if (StringUtils.isNumeric(color)) {
+//            var errorResponse = new ErrorResponse("Invalid color : " + color, LocalDateTime.now());
+//            return new ResponseEntity<>(errorResponse, headers, HttpStatus.BAD_REQUEST);
+//        }
+
         if (StringUtils.isNumeric(color)) {
-            var errorResponse = new ErrorResponse("Invalid color : " + color, LocalDateTime.now());
-            return new ResponseEntity<>(errorResponse, headers, HttpStatus.BAD_REQUEST);
+            throw new IllegalStateException("Invalid color : " + color);
+        }
+
+        if (StringUtils.isNumeric(brand)) {
+            throw new IllegalStateException("Invalid brand : " + color);
         }
 
         var cars = carElasticService.search(brand, color, pageable);
@@ -95,5 +104,21 @@ public class CarController {
     @GetMapping(value = "/date")
     public List<Car> findCarsReleasedAfter(@RequestParam(name = "first_release_date") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate firstReleaseDate) {
         return carElasticService.findByFirstReleaseDateAfter(firstReleaseDate);
+    }
+
+    @ExceptionHandler(value = IllegalStateException.class)
+    private ResponseEntity<ErrorResponse> handleInvalidColorEx(IllegalStateException e) {
+        var message = "Exception " + e.getMessage();
+        LOG.warn(message);
+        var errorResponse = new ErrorResponse(message, LocalDateTime.now());
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(value = IllegalApiParamException.class)
+    private ResponseEntity<ErrorResponse> handleInvalidApiParamException(IllegalApiParamException e) {
+        var message = "Exception API param " + e.getMessage();
+        LOG.warn(message);
+        var errorResponse = new ErrorResponse(message, LocalDateTime.now());
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 }
